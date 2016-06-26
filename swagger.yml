@@ -1,0 +1,491 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: RaceHero
+  description: |
+    A list of resources and parameters for accessing events and results from the RaceHero API.
+    
+    Find source code of this API [here](https://github.com/RaceHero/api)
+host: api.racehero.io
+basePath: /v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /events:
+    get:
+      summary: Get a list of event summaries in reverse chronological order (most recent first)
+      parameters:
+        - name: limit
+          in: query
+          description: number of events to return
+          type: integer
+          default: 25
+          minimum: 0
+          maximum: 100
+        - name: offset
+          in: query
+          description: number of events to skip for pagination
+          type: integer
+          default: 0
+          minimum: 0
+        - name: live
+          in: query
+          description: whether to restrict to only live events
+          type: boolean
+          default: false
+      responses:
+        200:
+          description:  List all events
+          schema:
+            type: object
+            properties:
+              recordset:
+                $ref: '#/definitions/Paginated'
+              results:
+                type: array
+                items:
+                  $ref: '#/definitions/EventSummary'
+                  
+                  
+  /events/{event_id}:
+    get:
+      summary: Get details about a single event
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          description: ID of the event
+          required: true
+      responses:
+        200:
+          description: get the details of a single event
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/EventDetail'
+              
+              
+  /events/{event_id}/results/{session_id}:
+    get:
+      summary: Retrieve the results of a single session for a single event with racer, lap times and position detail
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          description: ID of the event
+          required: true
+        - name: session_id
+          in: path
+          type: integer
+          description: ID of the session
+          required: true
+      responses:
+        200:
+          description: Sends the session results with org and track data
+          schema:
+            type: object
+            items:
+              $ref: '#/definitions/Result'
+
+definitions:
+
+  Event:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      started_at: 
+        type: "string"
+        format: "date-time"
+      ended_at: 
+        type: "string"
+        format: "date-time"
+      sport: 
+        $ref: '#/definitions/Sport'
+
+
+  EventSummary:
+    type: "object"
+    allOf:
+      - $ref: '#/definitions/Event'
+      - type: "object"
+        properties: 
+          created_at: 
+            type: "string"
+            format: "date-time"
+          updated_at: 
+            type: "string"
+            format: "date-time"
+          live: 
+            type: "boolean"
+          org: 
+            $ref: '#/definitions/Org'
+          track: 
+            $ref: '#/definitions/Track'
+
+
+  EventDetail:
+    type: "object"
+    allOf: 
+      - $ref: '#/definitions/EventSummary'
+      - type: "object"
+        properties: 
+          groups: 
+            type: "array"
+            items: 
+              $ref: '#/definitions/Group'
+
+  Sport: 
+    type: "object"
+    properties: 
+      name: 
+        type: "string"
+  
+    
+  Org: 
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      location: 
+        type: "string"
+      url: 
+        type: "string"
+      html_url: 
+        type: "string"
+      avatar_url: 
+        type: "string"
+
+  Track: 
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      configuration: 
+        type: "object"
+        properties: 
+          id: 
+            type: "integer"
+          name: 
+            type: "string"
+          length: 
+            type: "number"
+            format: double
+          units: 
+            type: "string"
+          direction: 
+            type: "string"
+            description: "Direction of travel on the circuit"
+            enum: 
+              - clockwise
+              - counterclockwise
+      url: 
+        type: "string"
+      html_url: 
+        type: "string"
+      avatar_url: 
+        type: "string"
+
+  Group:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      sessions: 
+        type: "array"
+        items: 
+          $ref: '#/definitions/Session'
+
+  Session: 
+    type: "object"
+    properties: 
+      id: 
+        type: "string"
+      name: 
+        type: "string"
+      type: 
+        type: "string"
+        description: "Scoring condition for the session"
+        enum: 
+          - practice
+          - qualifying
+          - race
+      started_at: 
+        type: "string"
+        format: "date-time"
+      ended_at: 
+        type: "string"
+        format: "date-time"
+      last_received_data_at: 
+        type: "string"
+        format: "date-time"
+      status: 
+        type: "string"
+        description: "Status of the results"
+        default: "provisional"
+        enum: 
+          - provisional
+          - official
+      total_laps: 
+        type: "integer"
+      has_results: 
+        type: "boolean"
+      results_url:
+        type: "string"
+        description: "url to retrieve the results for this session, if they exist, e.g. /events/{eventId}/results/{sessionId}"
+          
+  MetadataDefinition:
+    type: "object"
+    additionalProperties:
+      type: string
+
+  MetadataValues:
+    type: "object"
+    additionalProperties:
+      type: string
+
+  EntryList:
+    type: "object"
+    properties:
+      event_id: 
+        type: "string"
+      session_id: 
+        type: "string"
+      group_id: 
+        type: "string"
+      total: 
+        type: "integer"
+      metadata: 
+        $ref: '#/definitions/MetadataDefinition'
+      racers: 
+        type: "array"
+        items:
+          $ref: '#/definitions/Racers'
+
+  Racers:
+    type: "array"
+    items: 
+      $ref: '#/definitions/Racer'
+          
+  Racer:
+    type: "object"
+    properties: 
+      id:
+        type: "number"
+      number: 
+        type: "string"
+      first_name: 
+        type: "string"
+      last_name: 
+        type: "string"
+      display_name: 
+        type: "string"
+      class: 
+        type: "string"
+      registration_id:
+        description: "A value that can be set from third-party systems such as MotorsportReg.com"
+        type: "string"
+      metadata: 
+        $ref: '#/definitions/MetadataValues'
+
+  Result:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      created_at: 
+        type: "string"
+        format: "date-time"
+      updated_at: 
+        type: "string"
+        format: "date-time"
+      group: 
+        $ref: '#/definitions/Group'
+      session: 
+        $ref: '#/definitions/Session'
+      event: 
+        $ref: '#/definitions/Event'
+      track:
+        $ref: '#/definitions/Track'
+      metadata: 
+        $ref: '#/definitions/MetadataDefinition'
+      racers:
+        description: An array of racers in overall finishing order
+        type: "array"
+        items: 
+          $ref: '#/definitions/RacerLapArray'
+      results: 
+        description: An ordered array of racers at the end of the session. The sort order to recreate the end result is `total_laps DESC, total_time ASC`.
+        type: "array"
+        items:
+          $ref: '#/definitions/ResultLap'
+      laps:
+        description: An ordered array of ordered arrays representing the current order for each lap
+        type: "array"
+        items:
+          type: "array"
+          items:
+            $ref: '#/definitions/Lap'
+
+
+      flags:
+        description: An ordered array of the flags thrown during the session
+        type: "array"
+        items:
+          $ref: '#/definitions/Flag'
+          
+      notes:
+        type: "array"
+        items:
+          $ref: '#/definitions/Note'
+          
+#            position, position_in_class, racerid, gap_to_p1, gap_to_p1_in_class
+#            total_time
+#            average speed, best speed
+#            best lap time
+#            startpos, startpos_in_class
+#            fastest: boolean
+#            laps
+#            status: active, finished, dns, dnf, dq
+            
+#      laps:
+#      flags: 
+#      notes:
+#      penalties:
+
+  Lap:
+    description: "A single lap from results"
+    properties:
+      racer_session_id:
+        type: "number"
+      number:
+        description: The current lap number
+        type: "number"
+      position:
+        type: "number"
+      gap_to_p1:
+        description: "in seconds"
+        type: "number"
+        format: "double"
+      start_position:
+        type: "number"
+      position_in_class:
+        type: "number"
+      gap_to_p1_in_class:
+        description: "in seconds"
+        type: "number"
+        format: "double"
+      start_position_in_class:
+        type: "number"
+      time:
+        description: "in seconds"
+        type: "number"
+        format: "double"
+      speed:
+        description: "in unit of event - either km/h or mph"
+        type: "number"
+        format: "double"
+  
+  ResultLap:
+    description: A lap inside a result which includes run-wide details like average_speed and total_laps
+    allOf: 
+      - $ref: '#/definitions/Lap'
+      - type: "object"
+        properties:
+          total_laps:
+            type: "number"
+          total_time: 
+            type: "string"
+            format: "date-time"
+          fastest:
+            type: "boolean"
+          average_speed:
+            description: "in unit of event - either km/h or mph"
+            type: "number"
+            format: "double"
+          best_speed:
+            description: "in unit of event - either km/h or mph"
+            type: "number"
+            format: "double"
+          status:
+            type: "string"
+            enum:
+              - active
+              - finished
+              - pits
+              - dns
+              - dsq 
+              - dnf  
+  
+  RacerLapArray:
+    description: A racer with a laps property that contains an array of laps          
+    allOf:
+      - $ref: '#/definitions/Racer'
+      - type: "object"
+        properties:
+          laps: 
+            description: An ordered array of laps for this racer where the last member of the array is how they finished the session
+            type: "array"
+            items:
+              $ref: '#/definitions/Lap'
+
+  Flag:
+    description: "Control flag"
+    properties:
+      name:
+        description: A simple string describing the flag condition (subject to change)
+        type: "string"
+      started_at:
+        type: "string"
+        format: "date-time"
+      ended_at:
+        type: "string"
+        format: "date-time"
+      lead_lap:
+        description: The lap the leader was on when the flag was thrown
+        type: "number"
+      total_laps:
+        description: The number of laps the leader completed while under this flag condition
+        type: "number"
+      total_time:
+        description: The total time for this flag condition
+        type: "string"
+        format: "date-time"
+
+  Note:
+    description: Session notes and announcements from timing and scoring or race control
+    properties:
+      id:
+        type: "number"
+      posted_at: 
+        type: "string"
+        format: "date-time"
+      type:
+        type: "string"
+      text: 
+        type: "string"
+
+
+  Paginated:
+    properties:
+      count:
+        type: integer
+      offset:
+        type: integer
+      limit:
+        type: integer
+        
