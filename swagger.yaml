@@ -52,6 +52,7 @@ paths:
         200:
           description:  List all events
           schema:
+            type: object          
             properties:
               count:
                 type: integer
