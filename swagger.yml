@@ -1,14 +1,12 @@
 swagger: '2.0'
 info:
-  version: 1.0.21
+  version: 1.0
   title: RaceHero
-  description: >
-    A list of resources and parameters for accessing events and results from the
-    RaceHero API.
-
-
+  description: |
+    A list of resources and parameters for accessing events and results from the RaceHero API.
+    
     Find source code of this API [here](https://github.com/RaceHero/api)
-host: api.racehero.io
+host: api.racehero.io 
 basePath: /v1
 schemes:
   - https
@@ -20,7 +18,7 @@ securityDefinitions:
   basicAuth:
     type: basic
 security:
-  - basicAuth: []
+  - basicAuth: []  
 responses:
   UnauthorizedError:
     description: Authentication information is missing or invalid
@@ -30,9 +28,7 @@ responses:
 paths:
   /events:
     get:
-      summary: >-
-        Get a list of event summaries in reverse chronological order (most
-        recent first)
+      summary: Get a list of event summaries in reverse chronological order (most recent first)
       parameters:
         - name: limit
           in: query
@@ -53,20 +49,24 @@ paths:
           type: boolean
           default: false
       responses:
-        '200':
-          description: List all events
+        200:
+          description:  List all events
           schema:
-            type: object
             properties:
-              recordset:
-                $ref: '#/definitions/Paginated'
-              results:
+              count:
+                type: integer
+              offset:
+                type: integer
+              limit:
+                type: integer
+              data:
                 type: array
                 items:
                   $ref: '#/definitions/EventSummary'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-  '/events/{event_id}':
+        401:
+          $ref: "#/responses/UnauthorizedError"                  
+                  
+  /events/{event_id}:
     get:
       summary: Get details about a single event
       parameters:
@@ -76,15 +76,16 @@ paths:
           description: ID of the event
           required: true
       responses:
-        '200':
+        200:
           description: get the details of a single event
           schema:
             type: object
             items:
               $ref: '#/definitions/EventDetail'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-  '/events/{event_id}/runs':
+        401:
+          $ref: "#/responses/UnauthorizedError"  
+          
+  /events/{event_id}/runs:
     get:
       summary: Retrieve a list of the runs for a single event (the schedule)
       parameters:
@@ -94,21 +95,20 @@ paths:
           description: ID of the event
           required: true
       responses:
-        '200':
+        200:
           description: Sends the event schedule with run data
           schema:
             type: object
             items:
               $ref: '#/definitions/Run'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '404':
+        404: 
           description: Indicates no schedule has been posted yet
-  '/events/{event_id}/runs/{run_id}/results':
+        401:
+          $ref: "#/responses/UnauthorizedError"              
+              
+  /events/{event_id}/runs/{run_id}/results:
     get:
-      summary: >-
-        Retrieve the results of a single session for a single event with racer,
-        lap times and position detail
+      summary: Retrieve the results of a single session for a single event with racer, lap times and position detail
       parameters:
         - name: event_id
           in: path
@@ -121,17 +121,18 @@ paths:
           description: ID of the run
           required: true
       responses:
-        '200':
+        200:
           description: Sends the results for a single run
           schema:
             type: object
             items:
               $ref: '#/definitions/Result'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '404':
+        404: 
           description: indicates results are not yet posted
-  '/events/{event_id}/runs/{run_id}/racers':
+        401:
+          $ref: "#/responses/UnauthorizedError"              
+
+  /events/{event_id}/runs/{run_id}/racers:
     get:
       summary: Retrieve the entries for a single run with racer details
       parameters:
@@ -146,17 +147,18 @@ paths:
           description: ID of the run
           required: true
       responses:
-        '200':
+        200:
           description: Sends the entries for a single run
           schema:
             $ref: '#/definitions/EntryList'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '404':
+        404: 
           description: indicates entries are not yet posted
-  '/events/{event_id}/runs/{run_id}/racers/{racer_id}':
+        401:
+          $ref: "#/responses/UnauthorizedError"              
+
+  /events/{event_id}/runs/{run_id}/racers/{racer_id}:
     put:
-      summary: Update the entry details for a single racer in a single run
+      summary: Update the entry details for a single racer in a single run 
       parameters:
         - name: event_id
           in: path
@@ -174,11 +176,7 @@ paths:
           description: ID of the racer
           required: true
         - name: ignore_future_relay_updates
-          description: >-
-            if true, we will ignore future entry data from an operating Relay
-            for this entry. Allows an external system (e.g. barcode scanner) to
-            update racer details during a live run like indicating which racer
-            is driving during an endurance race.
+          description: if true, we will ignore future entry data from an operating Relay for this entry. Allows an external system (e.g. barcode scanner) to update racer details during a live run like indicating which racer is driving during an endurance race.
           in: query
           type: boolean
           required: false
@@ -187,18 +185,18 @@ paths:
           name: racer
           description: the racer detail to update
           schema:
-            $ref: '#/definitions/Racer'
+            $ref: "#/definitions/Racer" 
       responses:
-        '200':
+        200:
           description: sends the entry for a single racer for a single run
           schema:
             $ref: '#/definitions/Racer'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '404':
+        404: 
           description: indicates entry does not exist
+        401:
+          $ref: "#/responses/UnauthorizedError"              
     get:
-      summary: Retrieve the entry details for a single racer in a single run
+      summary: Retrieve the entry details for a single racer in a single run 
       parameters:
         - name: event_id
           in: path
@@ -216,223 +214,240 @@ paths:
           description: ID of the racer
           required: true
       responses:
-        '200':
+        200:
           description: Sends the entry for a single run
           schema:
             $ref: '#/definitions/Racer'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '404':
+        404: 
           description: indicates entry does not exist
+        401:
+          $ref: "#/responses/UnauthorizedError"              
+
 definitions:
+
   Event:
-    type: object
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      started_at:
-        type: string
-        format: date-time
-      ended_at:
-        type: string
-        format: date-time
-      sport:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      started_at: 
+        type: "string"
+        format: "date-time"
+      ended_at: 
+        type: "string"
+        format: "date-time"
+      sport: 
         $ref: '#/definitions/Sport'
+
+
   EventSummary:
-    type: object
+    type: "object"
     allOf:
       - $ref: '#/definitions/Event'
-      - type: object
-        properties:
-          created_at:
-            type: string
-            format: date-time
-          updated_at:
-            type: string
-            format: date-time
-          live:
-            type: boolean
-          org:
+      - type: "object"
+        properties: 
+          created_at: 
+            type: "string"
+            format: "date-time"
+          updated_at: 
+            type: "string"
+            format: "date-time"
+          live: 
+            type: "boolean"
+          org: 
             $ref: '#/definitions/Org'
-          track:
+          track: 
             $ref: '#/definitions/Track'
+
+
   EventDetail:
-    type: object
-    allOf:
+    type: "object"
+    allOf: 
       - $ref: '#/definitions/EventSummary'
-      - type: object
-        properties:
-          groups:
-            type: array
-            items:
+      - type: "object"
+        properties: 
+          groups: 
+            type: "array"
+            items: 
               $ref: '#/definitions/Group'
-  Sport:
-    type: object
-    properties:
-      name:
-        type: string
-  Org:
-    type: object
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      location:
-        type: string
-      url:
-        type: string
-      html_url:
-        type: string
-      avatar_url:
-        type: string
-  Track:
-    type: object
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      configuration:
-        type: object
-        properties:
-          id:
-            type: integer
-          name:
-            type: string
-          length:
-            type: number
+
+  Sport: 
+    type: "object"
+    properties: 
+      name: 
+        type: "string"
+  
+    
+  Org: 
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      location: 
+        type: "string"
+      url: 
+        type: "string"
+      html_url: 
+        type: "string"
+      avatar_url: 
+        type: "string"
+
+  Track: 
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      configuration: 
+        type: "object"
+        properties: 
+          id: 
+            type: "integer"
+          name: 
+            type: "string"
+          length: 
+            type: "number"
             format: double
-          units:
-            type: string
-          direction:
-            type: string
-            description: Direction of travel on the circuit
-            enum:
+          units: 
+            type: "string"
+          direction: 
+            type: "string"
+            description: "Direction of travel on the circuit"
+            enum: 
               - clockwise
               - counterclockwise
-      url:
-        type: string
-      html_url:
-        type: string
-      avatar_url:
-        type: string
+      url: 
+        type: "string"
+      html_url: 
+        type: "string"
+      avatar_url: 
+        type: "string"
+
   Group:
-    type: object
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      runs:
-        type: array
-        items:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      runs: 
+        type: "array"
+        items: 
           $ref: '#/definitions/Run'
-  Run:
-    type: object
-    properties:
-      id:
-        type: string
-      name:
-        type: string
-      type:
-        type: string
-        description: Scoring condition for the run
-        enum:
+
+  Run: 
+    type: "object"
+    properties: 
+      id: 
+        type: "string"
+      name: 
+        type: "string"
+      type: 
+        type: "string"
+        description: "Scoring condition for the run"
+        enum: 
           - practice
           - qualifying
           - race
           - grid_practice
           - grid_qualifying
           - grid_race
-      started_at:
-        type: string
-        format: date-time
-      ended_at:
-        type: string
-        format: date-time
-      last_received_data_at:
-        type: string
-        format: date-time
-      status:
-        type: string
-        description: Status of the results
-        default: provisional
-        enum:
+      started_at: 
+        type: "string"
+        format: "date-time"
+      ended_at: 
+        type: "string"
+        format: "date-time"
+      last_received_data_at: 
+        type: "string"
+        format: "date-time"
+      status: 
+        type: "string"
+        description: "Status of the results"
+        default: "provisional"
+        enum: 
           - provisional
           - official
-      total_laps:
-        type: integer
-      has_results:
-        type: boolean
+      total_laps: 
+        type: "integer"
+      has_results: 
+        type: "boolean"
       results_url:
-        type: string
-        description: url to retrieve the results for this run if they exist
+        type: "string"
+        description: "url to retrieve the results for this run if they exist"
+          
   RacerAttributesDefinition:
-    type: object
-    description: Provides a label for the corresponding additional attribute field
-    properties:
-      attribute1:
+    type: "object"
+    description: "Provides a label for the corresponding additional attribute field"
+    properties: 
+      attribute1: 
         type: string
-      attribute2:
+      attribute2: 
         type: string
-      attribute3:
+      attribute3: 
         type: string
-      attribute4:
+      attribute4: 
         type: string
-      attribute5:
+      attribute5: 
         type: string
-      attribute6:
+      attribute6: 
         type: string
-      attribute7:
+      attribute7: 
         type: string
-      attribute8:
+      attribute8: 
         type: string
+
   RacerAttributes:
-    type: object
-    description: Provides the data for each attribute field
-    properties:
-      attribute1:
+    type: "object"
+    description: "Provides the data for each attribute field"
+    properties: 
+      attribute1: 
         type: string
-      attribute2:
+      attribute2: 
         type: string
-      attribute3:
+      attribute3: 
         type: string
-      attribute4:
+      attribute4: 
         type: string
-      attribute5:
+      attribute5: 
         type: string
-      attribute6:
+      attribute6: 
         type: string
-      attribute7:
+      attribute7: 
         type: string
-      attribute8:
+      attribute8: 
         type: string
+
   EntryList:
-    type: object
+    type: "object"
     properties:
-      event_id:
-        type: string
-      run_id:
-        type: string
-      group_id:
-        type: string
-      total:
-        type: integer
-      attributes_labels:
+      event_id: 
+        type: "string"
+      run_id: 
+        type: "string"
+      group_id: 
+        type: "string"
+      total: 
+        type: "integer"
+      attributes_labels: 
         $ref: '#/definitions/RacerAttributesDefinition'
-      racers:
-        type: array
+      racers: 
+        type: "array"
         items:
           $ref: '#/definitions/Racers'
+
   Racers:
-    type: array
-    items:
+    type: "array"
+    items: 
       $ref: '#/definitions/Racer'
+          
   Racer:
-    type: object
+    type: "object"
     properties:
       id:
         type: integer
@@ -444,172 +459,187 @@ definitions:
         type: string
       attributes:
         $ref: '#/definitions/RacerAttributes'
+
   Result:
-    type: object
-    properties:
-      id:
-        type: integer
-      name:
-        type: string
-      created_at:
-        type: string
-        format: date-time
-      updated_at:
-        type: string
-        format: date-time
-      group:
+    type: "object"
+    properties: 
+      id: 
+        type: "integer"
+      name: 
+        type: "string"
+      created_at: 
+        type: "string"
+        format: "date-time"
+      updated_at: 
+        type: "string"
+        format: "date-time"
+      group: 
         $ref: '#/definitions/Group'
-      run:
+      run: 
         $ref: '#/definitions/Run'
-      event:
+      event: 
         $ref: '#/definitions/Event'
       track:
         $ref: '#/definitions/Track'
-      attributes_definition:
+      attributes_definition: 
         $ref: '#/definitions/RacerAttributesDefinition'
       racers:
         description: An array of racers in overall finishing order
-        type: array
-        items:
+        type: "array"
+        items: 
           $ref: '#/definitions/RacerLapArray'
-      results:
-        description: >-
-          An ordered array of racers at the end of the session. The sort order
-          to recreate the end result is `total_laps DESC, total_time ASC`.
-        type: array
+      results: 
+        description: An ordered array of racers at the end of the session. The sort order to recreate the end result is `total_laps DESC, total_time ASC`.
+        type: "array"
         items:
           $ref: '#/definitions/ResultLap'
       laps:
-        description: >-
-          An ordered array of ordered arrays representing the current order for
-          each lap
-        type: array
+        description: An ordered array of ordered arrays representing the current order for each lap
+        type: "array"
         items:
-          type: array
+          type: "array"
           items:
             $ref: '#/definitions/Lap'
+
+
       flags:
         description: An ordered array of the flags thrown during the session
-        type: array
+        type: "array"
         items:
           $ref: '#/definitions/Flag'
+          
       notes:
-        type: array
+        type: "array"
         items:
           $ref: '#/definitions/Note'
+          
+#            position, position_in_class, racerid, gap_to_p1, gap_to_p1_in_class
+#            total_time
+#            average speed, best speed
+#            best lap time
+#            startpos, startpos_in_class
+#            fastest: boolean
+#            laps
+#            status: active, finished, dns, dnf, dq
+            
+#      laps:
+#      flags: 
+#      notes:
+#      penalties:
+
   Lap:
-    description: A single lap from results
+    description: "A single lap from results"
     properties:
       racer_session_id:
-        type: number
+        type: "number"
       number:
         description: The current lap number
-        type: number
+        type: "number"
       position:
-        type: number
+        type: "number"
       gap_to_p1:
-        description: in seconds
-        type: number
-        format: double
+        description: "in seconds"
+        type: "number"
+        format: "double"
       start_position:
-        type: number
+        type: "number"
       position_in_class:
-        type: number
+        type: "number"
       gap_to_p1_in_class:
-        description: in seconds
-        type: number
-        format: double
+        description: "in seconds"
+        type: "number"
+        format: "double"
       start_position_in_class:
-        type: number
+        type: "number"
       time:
-        description: in seconds
-        type: number
-        format: double
+        description: "in seconds"
+        type: "number"
+        format: "double"
       speed:
-        description: in unit of event - either km/h or mph
-        type: number
-        format: double
+        description: "in unit of event - either km/h or mph"
+        type: "number"
+        format: "double"
+  
   ResultLap:
-    description: >-
-      A lap inside a result which includes run-wide details like average_speed
-      and total_laps
-    allOf:
+    description: A lap inside a result which includes run-wide details like average_speed and total_laps
+    allOf: 
       - $ref: '#/definitions/Lap'
-      - type: object
+      - type: "object"
         properties:
           total_laps:
-            type: number
-          total_time:
-            type: string
-            format: date-time
+            type: "number"
+          total_time: 
+            type: "string"
+            format: "date-time"
           fastest:
-            type: boolean
+            type: "boolean"
           average_speed:
-            description: in unit of event - either km/h or mph
-            type: number
-            format: double
+            description: "in unit of event - either km/h or mph"
+            type: "number"
+            format: "double"
           best_speed:
-            description: in unit of event - either km/h or mph
-            type: number
-            format: double
+            description: "in unit of event - either km/h or mph"
+            type: "number"
+            format: "double"
           status:
-            type: string
+            type: "string"
             enum:
               - active
               - finished
               - pits
               - dns
-              - dsq
-              - dnf
+              - dsq 
+              - dnf  
+  
   RacerLapArray:
-    description: A racer with a laps property that contains an array of laps
+    description: A racer with a laps property that contains an array of laps          
     allOf:
       - $ref: '#/definitions/Racer'
-      - type: object
+      - type: "object"
         properties:
-          laps:
-            description: >-
-              An ordered array of laps for this racer where the last member of
-              the array is how they finished the session
-            type: array
+          laps: 
+            description: An ordered array of laps for this racer where the last member of the array is how they finished the session
+            type: "array"
             items:
               $ref: '#/definitions/Lap'
+
   Flag:
-    description: Control flag
+    description: "Control flag"
     properties:
       name:
         description: A simple string describing the flag condition (subject to change)
-        type: string
+        type: "string"
       started_at:
-        type: string
-        format: date-time
+        type: "string"
+        format: "date-time"
       ended_at:
-        type: string
-        format: date-time
+        type: "string"
+        format: "date-time"
       lead_lap:
         description: The lap the leader was on when the flag was thrown
-        type: number
+        type: "number"
       total_laps:
-        description: >-
-          The number of laps the leader completed while under this flag
-          condition
-        type: number
+        description: The number of laps the leader completed while under this flag condition
+        type: "number"
       total_time:
         description: The total time for this flag condition
-        type: string
-        format: date-time
+        type: "string"
+        format: "date-time"
+
   Note:
     description: Session notes and announcements from timing and scoring or race control
     properties:
       id:
-        type: number
-      posted_at:
-        type: string
-        format: date-time
+        type: "number"
+      posted_at: 
+        type: "string"
+        format: "date-time"
       type:
-        type: string
-      text:
-        type: string
+        type: "string"
+      text: 
+        type: "string"
+
+
   Paginated:
     properties:
       count:
@@ -618,3 +648,4 @@ definitions:
         type: integer
       limit:
         type: integer
+        
