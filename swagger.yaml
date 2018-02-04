@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   version: "1.0"
-  title: RaceHet ro
+  title: RaceHero
   description: |
     A list of resources and parameters for accessing events and results from the RaceHero API.
     
@@ -80,9 +80,7 @@ paths:
         200:
           description: get the details of a single event
           schema:
-            type: object
-            items:
-              $ref: '#/definitions/EventDetail'
+            $ref: '#/definitions/EventDetail'
         401:
           $ref: "#/responses/UnauthorizedError"  
           
@@ -99,8 +97,8 @@ paths:
         200:
           description: Sends the event schedule with run data
           schema:
-            type: object
-            items:
+            type: array
+            items: 
               $ref: '#/definitions/Run'
         404: 
           description: Indicates no schedule has been posted yet
@@ -125,9 +123,7 @@ paths:
         200:
           description: Sends the results for a single run
           schema:
-            type: object
-            items:
-              $ref: '#/definitions/Result'
+            $ref: '#/definitions/Result'
         404: 
           description: indicates results are not yet posted
         401:
@@ -151,6 +147,7 @@ paths:
         200:
           description: Sends the entries for a single run
           schema:
+            type: object
             $ref: '#/definitions/EntryList'
         404: 
           description: indicates entries are not yet posted
@@ -231,14 +228,18 @@ definitions:
     properties: 
       id: 
         type: "integer"
+        example: 129342
       name: 
         type: "string"
+        example: "International Grand Prix"
       started_at: 
         type: "string"
         format: "date-time"
+        example: "2018-01-01 09:00:00"
       ended_at: 
         type: "string"
         format: "date-time"
+        example: "2018-01-03 18:00:00"
       sport: 
         $ref: '#/definitions/Sport'
 
@@ -252,11 +253,14 @@ definitions:
           created_at: 
             type: "string"
             format: "date-time"
+            example: "2018-01-01 04:55:23"
           updated_at: 
             type: "string"
             format: "date-time"
+            example: "2018-01-01 06:58:08"
           live: 
             type: "boolean"
+            example: true
           org: 
             $ref: '#/definitions/Org'
           track: 
@@ -279,6 +283,7 @@ definitions:
     properties: 
       name: 
         type: "string"
+        example: "CARRACING"
   
     
   Org: 
@@ -286,12 +291,16 @@ definitions:
     properties: 
       id: 
         type: "integer"
+        example: 1000
       name: 
         type: "string"
+        example: "Great Racing Club"
       location: 
         type: "string"
+        example: "Indianapolis, Indiana"
       url: 
         type: "string"
+        example: "http://greatracingclub.org"
       html_url: 
         type: "string"
       avatar_url: 
@@ -302,28 +311,36 @@ definitions:
     properties: 
       id: 
         type: "integer"
+        example: 3000
       name: 
         type: "string"
+        example: "Challening Race Track"
       configuration: 
         type: "object"
         properties: 
           id: 
             type: "integer"
+            example: 4000
           name: 
             type: "string"
+            example: "Full Course"
           length: 
             type: "number"
             format: double
+            example: "3.5"
           units: 
             type: "string"
+            example: "mi"
           direction: 
             type: "string"
             description: "Direction of travel on the circuit"
+            example: "clockwise"
             enum: 
               - clockwise
               - counterclockwise
       url: 
         type: "string"
+        example: "http://challengingtrack.org"
       html_url: 
         type: "string"
       avatar_url: 
@@ -334,8 +351,10 @@ definitions:
     properties: 
       id: 
         type: "integer"
+        example: 5000
       name: 
         type: "string"
+        example: "Group 7"
       runs: 
         type: "array"
         items: 
@@ -346,11 +365,14 @@ definitions:
     properties: 
       id: 
         type: "string"
+        example: 8000
       name: 
         type: "string"
+        example: "Sunday Final Race"
       type: 
         type: "string"
         description: "Scoring condition for the run"
+        example: "race"
         enum: 
           - practice
           - qualifying
