@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  version: 1.0
-  title: RaceHero
+  version: "1.0"
+  title: RaceHet ro
   description: |
     A list of resources and parameters for accessing events and results from the RaceHero API.
     
@@ -648,4 +648,3 @@ definitions:
         type: integer
       limit:
         type: integer
-        
