@@ -221,6 +221,25 @@ paths:
         401:
           $ref: "#/responses/UnauthorizedError"              
 
+  /live/transponders/{transponder_id}:
+    get:
+      summary: Retrieve the live status of a single transponder
+      parameters:
+        - name: transponder_id
+          in: path
+          type: integer
+          description: ID of the vehicle transponder 
+          required: true
+      responses:
+        200:
+          description: Returns the current live data for a transponder
+          schema:
+            type: object
+            $ref: '#/definitions/Passing'
+        404: 
+          description: The requested transponder is not currently live
+
+
 definitions:
 
   Event:
@@ -243,7 +262,62 @@ definitions:
       sport: 
         $ref: '#/definitions/Sport'
 
-
+  Passing:
+    type: "object"
+    properties:
+      name:
+        type: "string"
+        example: "Lewis Hamilton"
+      number:
+        type: "string"
+        example: "44"
+      class:
+        type: "string"
+        example: "GP"
+      attributes:
+        $ref: '#/definitions/RacerAttributes'
+      current_lap:
+        type: "integer"
+        example: 5
+      position_in_run:
+        type: "integer"
+        example: 1
+      position_in_class:
+        type: "integer"
+        example: 1
+      timestamp:
+        type: "string"
+      total_seconds:
+        type: "integer"
+      total_time:  
+        type: "string"
+      best_lap_number:
+        type: "integer"
+        example: 3
+      best_lap_time:
+        type: "string"
+      best_lap_time_seconds:
+        type: "integer"
+      best_overall:
+        type: "boolean"
+        example: true
+      gap_to_ahead_in_run:
+        type: "string"
+      gap_to_p1_in_run:
+        type: "string"
+      gap_to_p1_in_class:
+        type: "string"
+      last_lap_time:
+        type: "string"
+      last_lap_time_seconds:
+        type: "integer"
+      start_position_in_run:
+        type: "integer"
+        example: 4
+      start_position_in_class:
+        type: "integer"
+        example: 2
+    
   EventSummary:
     type: "object"
     allOf:
