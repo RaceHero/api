@@ -578,7 +578,7 @@ definitions:
         $ref: '#/definitions/Event'
       track:
         $ref: '#/definitions/Track'
-      attributes_definition: 
+      attributes_labels: 
         $ref: '#/definitions/RacerAttributesDefinition'
       racers:
         description: An array of racers in overall finishing order
