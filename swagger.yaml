@@ -181,9 +181,9 @@ paths:
           default: false
         - in: body
           name: racer
-          description: the racer detail to update
+          description: the racer detail to update; class and number may not be updated 
           schema:
-            $ref: "#/definitions/Racer" 
+            $ref: "#/definitions/RacerUpdate" 
       responses:
         200:
           description: sends the entry for a single racer for a single run
@@ -556,6 +556,17 @@ definitions:
         type: string
       attributes:
         $ref: '#/definitions/RacerAttributes'
+
+  RacerUpdate:
+    type: "object"
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      attributes:
+        $ref: '#/definitions/RacerAttributes'
+
 
   Result:
     type: "object"
