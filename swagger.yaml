@@ -234,8 +234,7 @@ paths:
         200:
           description: Returns the current live data for a transponder
           schema:
-            type: object
-            $ref: '#/definitions/Passing'
+            $ref: '#/definitions/LiveTransponderPassing'
         404: 
           description: The requested transponder is not currently live
 
@@ -318,6 +317,14 @@ definitions:
         type: "integer"
         example: 2
     
+  LiveTransponderPassing:
+    description: "For the /live/transponders/{id}"
+    allOf:
+    - $ref: '#/definitions/Passing'
+    - properties:
+        gap_to_ahead_in_class:
+          type: "string"
+
   EventSummary:
     type: "object"
     allOf:
