@@ -239,6 +239,53 @@ paths:
           description: Returns the current live data for a transponder
           schema:
             $ref: '#/definitions/LiveTransponderPassing'
+          examples:
+            racer_in_p3_with_gaps: 
+              gap_to_ahead_in_run: 10.223
+              gap_to_p1_in_run: 15.052
+              gap_to_ahead_in_class: 10.223
+              gap_to_p1_in_class: 15.052
+              gap_to_ahead_in_run_laps: 0
+              gap_to_p1_in_run_laps: 0
+              gap_to_ahead_in_class_laps: 0
+              gap_to_p1_in_class_laps: 0
+            racer_in_p3_passed_by_p4_with_null_gap:
+              gap_to_ahead_in_run: null
+              gap_to_p1_in_run: 15.052
+              gap_to_ahead_in_class: null
+              gap_to_p1_in_class: 15.052
+              gap_to_ahead_in_run_laps: 0
+              gap_to_p1_in_run_laps: 0
+              gap_to_ahead_in_class_laps: 0
+              gap_to_p1_in_class_laps: 0
+            racer_in_p1_passed_by_p2_with_null_gap:
+              gap_to_ahead_in_run: null
+              gap_to_p1_in_run: null
+              gap_to_ahead_in_class: null
+              gap_to_p1_in_class: null
+              gap_to_ahead_in_run_laps: 0
+              gap_to_p1_in_run_laps: 0
+              gap_to_ahead_in_class_laps: 0
+              gap_to_p1_in_class_laps: 0
+            racer_in_p10_lapped_by_p1:
+              gap_to_ahead_in_run: 90.237
+              gap_to_p1_in_run: 90.237
+              gap_to_ahead_in_class: 5.200
+              gap_to_p1_in_class: 5.200
+              gap_to_ahead_in_run_laps: 0
+              gap_to_p1_in_run_laps: 1
+              gap_to_ahead_in_class_laps: 0
+              gap_to_p1_in_class_laps: 1
+            racer_stops_and_is_passed_by_all:
+              gap_to_ahead_in_run: null
+              gap_to_p1_in_run: null
+              gap_to_ahead_in_class: null
+              gap_to_p1_in_class: null
+              gap_to_ahead_in_run_laps: 3
+              gap_to_p1_in_run_laps: 4
+              gap_to_ahead_in_class_laps: 3
+              gap_to_p1_in_class_laps: 4
+
         404: 
           description: The requested transponder is not currently live
 
@@ -289,38 +336,55 @@ definitions:
         type: "integer"
         example: 1
       timestamp:
-        type: "string"
-      total_seconds:
-        type: "integer"
-      total_time:  
-        type: "string"
+        type: "number"
+      total_time:
+        type: "number"
+        description: "Total time in seconds"
+        example: 354.201
       best_lap_number:
         type: "integer"
         example: 3
       best_lap_time:
-        type: "string"
-      best_lap_time_seconds:
-        type: "integer"
+        type: "number"
       best_overall:
         type: "boolean"
         example: true
+        description: "true for P1, false for others"
       gap_to_ahead_in_run:
-        type: "string"
-      gap_to_p1_in_run:
-        type: "string"
-      gap_to_p1_in_class:
-        type: "string"
-      last_lap_time:
-        type: "string"
-      last_lap_time_seconds:
+        type: "number"
+        description: "The gap in seconds, may be null to describe when it cannot be calculated (e.g., P3 is passed by P4 and has not yet completed a lap; it is not possible to calculate a gap for P3 so will return null under those circumstances. Once the former P3 racer crosses the line, the gap will be calculated anew)"
+        example: 50.223
+      gap_to_ahead_in_run_laps:
         type: "integer"
+        description: "The lap delta; it will be 0 when the racers are on the same lap"
+      gap_to_ahead_in_class:
+        type: "number"
+        description: "The gap in seconds"
+      gap_to_ahead_in_class_laps:
+        type: "integer"
+        description: "The lap delta; it will be 0 when the racers are on the same lap"
+      gap_to_p1_in_run:
+        type: "number"
+        description: "The gap in seconds"
+      gap_to_p1_in_run_laps:
+        type: "integer"
+        description: "The lap delta; it will be 0 when the racers are on the same lap"
+      gap_to_p1_in_class:
+        type: "number"
+        description: "The gap in seconds"
+      gap_to_p1_in_class_laps:
+        type: "integer"
+        description: "The lap delta; it will be 0 when the racers are on the same lap"
+      last_lap_time:
+        type: "number"
+        example: 50.629
       start_position_in_run:
         type: "integer"
         example: 4
       start_position_in_class:
         type: "integer"
         example: 2
-    
+
   LiveTransponderPassing:
     description: "For the /live/transponders/{id}"
     allOf:
