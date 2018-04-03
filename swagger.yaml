@@ -352,26 +352,26 @@ definitions:
         description: "true for P1, false for others"
       gap_to_ahead_in_run:
         type: "number"
-        description: "The gap in seconds, may be null to describe when it cannot be calculated (e.g., P3 is passed by P4 and has not yet completed a lap; it is not possible to calculate a gap for P3 so will return null under those circumstances. Once the former P3 racer crosses the line, the gap will be calculated anew)"
+        description: "The gap in seconds, may be null to describe when it cannot be calculated (e.g., racer C is passed by D. D crosses the loop. Before C crosses the loop again, it is not possible to calculate a gap to D so API will return null under those circumstances. Once racer Ccrosses the line, the gap will be calculated anew. Most UIs will want to continue displaying the previous gap but null here indicates the value is unknown.)"
         example: 50.223
       gap_to_ahead_in_run_laps:
         type: "integer"
         description: "The lap delta; it will be 0 when the racers are on the same lap"
       gap_to_ahead_in_class:
         type: "number"
-        description: "The gap in seconds"
+        description: "The gap in seconds, can be null"
       gap_to_ahead_in_class_laps:
         type: "integer"
         description: "The lap delta; it will be 0 when the racers are on the same lap"
       gap_to_p1_in_run:
         type: "number"
-        description: "The gap in seconds"
+        description: "The gap in seconds, can be null"
       gap_to_p1_in_run_laps:
         type: "integer"
         description: "The lap delta; it will be 0 when the racers are on the same lap"
       gap_to_p1_in_class:
         type: "number"
-        description: "The gap in seconds"
+        description: "The gap in seconds, can be null"
       gap_to_p1_in_class_laps:
         type: "integer"
         description: "The lap delta; it will be 0 when the racers are on the same lap"
