@@ -410,6 +410,16 @@ definitions:
           live: 
             type: "boolean"
             example: true
+          url: 
+            type: "string"
+            example: "https://racehero.io/events/your-great-event-here"
+          timezone: 
+            type: "string"
+            example: "America/Los_Angeles"
+          notes: 
+            type: "array"
+            description: "Arbitrary display fields received from the T&S software"
+            example: ["Chief Steward - Lewis", "Race Chair - Sebastian", "Operating Steward - Charlie", "Chief of Timing & Scoring - Kimi"]
           org: 
             $ref: '#/definitions/Org'
           track: 
