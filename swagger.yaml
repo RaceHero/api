@@ -561,7 +561,7 @@ definitions:
         type: "boolean"
       results_url:
         type: "string"
-        description: "url to retrieve the results for this run if they exist"
+        description: "public url to access the results for this run"
           
   RacerAttributesDefinition:
     type: "object"
