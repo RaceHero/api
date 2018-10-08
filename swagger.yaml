@@ -418,6 +418,8 @@ definitions:
             example: "America/Los_Angeles"
           notes: 
             type: "array"
+            items: 
+              type: "string"
             description: "Arbitrary display fields received from the T&S software"
             example: ["Chief Steward - Lewis", "Race Chair - Sebastian", "Operating Steward - Charlie", "Chief of Timing & Scoring - Kimi"]
           org: 
