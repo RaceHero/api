@@ -88,7 +88,7 @@ paths:
         401:
           $ref: "#/responses/UnauthorizedError"  
 
-    post:
+    post: 
       summary: Create a new event. 
       parameters:
         - in: path
@@ -114,7 +114,6 @@ paths:
                 format: date-time
                 description: End date and time of the event.
               sport:
-                type: object
                 $ref: "#/definitions/Sport"
               is_live:
                 type: boolean
@@ -124,13 +123,62 @@ paths:
                 type: string
                 description: Indicate timezone for the event.
               notes:
-                type: object
                 $ref: "#/definitions/Note"
               track_config_id:
                 description: ID of the track configuration.
                 type: integer
               groups:
-                type: object
+                $ref: "#/definitions/Group"
+           
+      responses:
+        200:
+          description: sends the entry for a single racer for a single run
+          schema:
+            $ref: '#/definitions/EventDetail'
+        404: 
+          description: indicates entry does not exist
+        401:
+          $ref: "#/responses/UnauthorizedError" 
+    put: 
+      summary: Update an event. 
+      parameters:
+        - in: path
+          name: event_id
+          type: integer
+          description: ID of the event
+          required: true
+        - in: body
+          name: body
+          description: The event you want to update.
+          schema:
+            type: object
+            properties:
+              scoring_system:
+                type: string
+                description: The name of the scoring system being used. 
+              starts_at:
+                type: string
+                format: date-time
+                description: Start date and time of the event.
+              ends_at:
+                type: string
+                format: date-time
+                description: End date and time of the event.
+              sport:
+                $ref: "#/definitions/Sport"
+              is_live:
+                type: boolean
+                description: Indicate if the event is currently live.
+                default: false
+              timezone:
+                type: string
+                description: Indicate timezone for the event.
+              notes:
+                $ref: "#/definitions/Note"
+              track_config_id:
+                description: ID of the track configuration.
+                type: integer
+              groups:
                 $ref: "#/definitions/Group"
            
       responses:
@@ -189,10 +237,8 @@ paths:
             type: object
             properties:
               attributes:
-                type: object
                 $ref: "#/definitions/RacerAttributesDefinition"
               racers:
-                type: object
                 $ref: "#/definitions/Racers"
            
       responses:
@@ -311,7 +357,6 @@ paths:
         200:
           description: Sends the entries for a single run
           schema:
-            type: object
             $ref: '#/definitions/EntryList'
         404: 
           description: indicates entries are not yet posted
