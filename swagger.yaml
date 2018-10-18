@@ -122,6 +122,8 @@ paths:
               timezone:
                 type: string
                 description: Indicate timezone for the event.
+              attributes_labels:
+                $ref: "#/definitions/RacerAttributesDefinition"
               notes:
                 $ref: "#/definitions/Note"
               track_config_id:
@@ -271,7 +273,8 @@ paths:
           description: Indicates no schedule has been posted yet
         401:
           $ref: "#/responses/UnauthorizedError"              
-              
+            
+  
   /events/{event_id}/runs/{run_id}/results:
     get:
       summary: Retrieve the results of a single session for a single event with racer, lap times and position detail
