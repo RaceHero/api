@@ -207,10 +207,6 @@ paths:
           type: integer
           description: ID of the group
           required: true
-        - name: expand
-          in: query
-          description: ?expand=org,track,groups optionally transforms IDs into full-blown objects
-          type: string
       responses:
         200:
           description: get the racers of a single group
