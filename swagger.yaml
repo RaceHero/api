@@ -102,6 +102,9 @@ paths:
           schema:
             type: object
             properties:
+              event_name:
+                type: string
+                description: The name of the event that will be shown in live timing & results.
               scoring_system:
                 type: string
                 description: The name of the scoring system being used. 
@@ -124,8 +127,10 @@ paths:
                 description: Indicate timezone for the event.
               attributes_labels:
                 $ref: "#/definitions/RacerAttributesDefinition"
-              notes:
-                $ref: "#/definitions/Note"
+              notes: 
+                type: "string"
+                description: "Arbitrary display fields received from the T&S software"
+                example: ["Chief Steward - Lewis", "Race Chair - Sebastian", "Operating Steward - Charlie", "Chief of Timing & Scoring - Kimi"]
               track_config_id:
                 description: ID of the track configuration.
                 type: integer
