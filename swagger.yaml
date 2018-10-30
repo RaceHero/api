@@ -494,14 +494,15 @@ paths:
           required: true
         - in: body
           name: body
-          description: Passing data for a racer in a run.
+          description: An array of passings data for racers in a run.
           schema:
-            type: object
-            properties: 
-              racer_id: 
-                type: integer
-              data:
-                $ref: '#/definitions/Passing'
+            type: array
+            items:
+              properties: 
+                racer_id: 
+                  type: integer
+                data:
+                  $ref: '#/definitions/Passing'
               
       responses:
         200:
@@ -737,10 +738,23 @@ definitions:
         example: "2018-01-03 18:00:00"
       sport: 
         $ref: '#/definitions/Sport'
+  
+  Transponder:
+    type: "object"
+    properties: 
+      trandponder_number: 
+        type: "integer"
+        example: 129342
 
   Passing:
     type: "object"
     properties:
+      racer_id:
+        type: "string"
+        description: "Unique ID of the racer"
+      vehicle_id:
+        type: "string"
+        description: "Unique ID of the vehicle"
       name:
         type: "string"
         example: "Lewis Hamilton"
@@ -763,10 +777,46 @@ definitions:
         example: 1
       timestamp:
         type: "number"
-      total_time:
+      total_time_in_run:
         type: "number"
+        format: "float"
         description: "Total time in seconds"
         example: 354.201
+      lap_time:
+        type: "number"
+        format: "float"
+        description: "Total time in seconds"
+        example: 354.201
+      total_laps:
+        type: "number"
+        description: "Total number of laps in the run"
+        example: 35
+      end_time:
+        type: "number"
+        format: "date-time"
+        description: "Expected end time of the run"
+        example: "2018-01-01 06:58:08"
+      laps_since_pit:
+        type: "number"
+        description: "Number of laps since the last pit"
+        example: 3
+      last_pit_lap:
+        type: "number"
+        description: "Lap number of the last pit"
+        example: 10
+      total_pit_stops:
+        type: "number"
+        description: "Total number of pits in run"
+        example: 2
+      current_flag:
+        type: "string"
+        description: "Current flag state of the run"
+        example: "Green"
+      transponders:
+        type: "array"
+        description: "Transponders for the vehicle"
+        items:
+          $ref: '#/definitions/Transponder'
       best_lap_number:
         type: "integer"
         example: 3
