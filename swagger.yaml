@@ -131,7 +131,7 @@ paths:
                 type: "string"
                 description: "Arbitrary display fields received from the T&S software"
                 example: ["Chief Steward - Lewis", "Race Chair - Sebastian", "Operating Steward - Charlie", "Chief of Timing & Scoring - Kimi"]
-              track_config_id:
+              venue_configuration_id:
                 description: ID of the track configuration.
                 type: integer
               groups:
@@ -216,12 +216,15 @@ paths:
         200:
           description: get the racers of a single group
           schema:
-            $ref: '#/definitions/EntryList'
+            $ref: '#/definitions/Group'
+            properties:
+              racers:
+                $ref: '#/definitions/Racers'
         401:
           $ref: "#/responses/UnauthorizedError"  
-
+     
     post:
-      summary: Add racers to groups. 
+      summary: Create a group with racers.
       parameters:
         - in: path
           name: event_id
@@ -235,22 +238,20 @@ paths:
           required: true
         - in: body
           name: body
-          description: The attributes and racers you want to add to the group.
+          description: The attributes and racers you want to add to the run.
           schema:
             type: object
+            $ref: '#/definitions/Group'
             properties:
-              racers:
-                $ref: "#/definitions/Racers"
-           
+              runs:
+                $ref: "#/definitions/Run"
       responses:
         200:
-          description: Updates the group with the provided racers.
+          description: get the racers of a single group
           schema:
             $ref: '#/definitions/EntryList'
-        404: 
-          description: indicates group does not exist
         401:
-          $ref: "#/responses/UnauthorizedError" 
+          $ref: "#/responses/UnauthorizedError"  
           
   /events/{event_id}/runs:
     get:
@@ -272,8 +273,42 @@ paths:
           description: Indicates no schedule has been posted yet
         401:
           $ref: "#/responses/UnauthorizedError"              
-            
   
+  /events/{event_id}/runs/{run_id}:
+    post:
+      summary: Create a run with racers.
+      parameters:
+        - in: path
+          name: event_id
+          type: integer
+          description: ID of the event
+          required: true
+        - name: run_id
+          in: path
+          type: integer
+          description: ID of the run
+          required: true
+        - in: body
+          name: body
+          description: The attributes and racers you want to add to the run.
+          schema:
+            type: object
+            properties:
+              racers:
+                $ref: "#/definitions/Racers"
+                
+      responses:
+        200:
+          description: Updates the group with the provided racers.
+          schema:
+            $ref: '#/definitions/EntryList'
+        404: 
+          description: indicates group does not exist
+        401:
+          $ref: "#/responses/UnauthorizedError" 
+    
+    
+    
   /events/{event_id}/runs/{run_id}/results:
     get:
       summary: Retrieve the results of a single session for a single event with racer, lap times and position detail
@@ -552,7 +587,7 @@ paths:
         200:
           description: get the venues
           schema:
-            $ref: '#/definitions/Track'
+            $ref: '#/definitions/Venue'
         401:
           $ref: "#/responses/UnauthorizedError"  
   
@@ -563,13 +598,13 @@ paths:
           name: body
           description: Details about the venue
           schema:
-            $ref: '#/definitions/Track'
+            $ref: '#/definitions/Venue'
               
       responses:
         200:
           description: adds a venue.
           schema:
-            $ref: '#/definitions/Track'
+            $ref: '#/definitions/Venue'
         404: 
           description: indicates venue does not exist
         401:
@@ -588,7 +623,7 @@ paths:
         200:
           description: Details about the venue configuration
           schema:
-            $ref: '#/definitions/TrackConfiguration'
+            $ref: '#/definitions/VenueConfiguration'
         401:
           $ref: "#/responses/UnauthorizedError"  
   
@@ -604,13 +639,13 @@ paths:
           name: body
           description: Details about the venue
           schema:
-            $ref: '#/definitions/TrackConfiguration'
+            $ref: '#/definitions/VenueConfiguration'
               
       responses:
         200:
           description: adds a venue.
           schema:
-            $ref: '#/definitions/Track'
+            $ref: '#/definitions/Venue'
         404: 
           description: indicates venue does not exist
         401:
@@ -814,7 +849,7 @@ definitions:
           org: 
             $ref: '#/definitions/Org'
           track: 
-            $ref: '#/definitions/Track'
+            $ref: '#/definitions/Venue'
 
   
   EventDetail:
@@ -856,7 +891,7 @@ definitions:
       avatar_url: 
         type: "string"
 
-  Track: 
+  Venue: 
     type: "object"
     properties: 
       id: 
@@ -888,7 +923,7 @@ definitions:
       long:
         type: "string"
   
-  TrackConfiguration: 
+  VenueConfiguration: 
     type: "object"
     properties: 
       venue_id:
@@ -1093,7 +1128,7 @@ definitions:
       event: 
         $ref: '#/definitions/Event'
       track:
-        $ref: '#/definitions/Track'
+        $ref: '#/definitions/Venue'
       attributes_labels: 
         $ref: '#/definitions/RacerAttributesDefinition'
       racers:
