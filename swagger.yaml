@@ -198,7 +198,7 @@ paths:
         401:
           $ref: "#/responses/UnauthorizedError" 
 
-  /events/{event_id}/groups/{group_id}:
+  /events/{event_id}/groups/{group_id}/racers:
     get:
       summary: Get an entry list for a group.
       parameters:
@@ -243,8 +243,8 @@ paths:
             type: object
             $ref: '#/definitions/Group'
             properties:
-              runs:
-                $ref: "#/definitions/Run"
+              racers:
+                $ref: "#/definitions/Racer"
       responses:
         200:
           description: get the racers of a single group
@@ -273,41 +273,6 @@ paths:
           description: Indicates no schedule has been posted yet
         401:
           $ref: "#/responses/UnauthorizedError"              
-  
-  /events/{event_id}/runs/{run_id}:
-    post:
-      summary: Create a run with racers.
-      parameters:
-        - in: path
-          name: event_id
-          type: integer
-          description: ID of the event
-          required: true
-        - name: run_id
-          in: path
-          type: integer
-          description: ID of the run
-          required: true
-        - in: body
-          name: body
-          description: The attributes and racers you want to add to the run.
-          schema:
-            type: object
-            properties:
-              racers:
-                $ref: "#/definitions/Racers"
-                
-      responses:
-        200:
-          description: Updates the group with the provided racers.
-          schema:
-            $ref: '#/definitions/EntryList'
-        404: 
-          description: indicates group does not exist
-        401:
-          $ref: "#/responses/UnauthorizedError" 
-    
-    
     
   /events/{event_id}/runs/{run_id}/results:
     get:
@@ -399,6 +364,41 @@ paths:
           description: indicates entries are not yet posted
         401:
           $ref: "#/responses/UnauthorizedError"              
+    
+    post:
+      summary: Create a run with racers.
+      parameters:
+        - in: path
+          name: event_id
+          type: integer
+          description: ID of the event
+          required: true
+        - name: run_id
+          in: path
+          type: integer
+          description: ID of the run
+          required: true
+        - in: body
+          name: body
+          description: The attributes and racers you want to add to the run.
+          schema:
+            type: object
+            properties:
+              racers:
+                $ref: "#/definitions/Racers"
+                
+      responses:
+        200:
+          description: Updates the group with the provided racers.
+          schema:
+            $ref: '#/definitions/EntryList'
+        404: 
+          description: indicates group does not exist
+        401:
+          $ref: "#/responses/UnauthorizedError" 
+      
+  
+  
   /events/{event_id}/runs/{run_id}/flags:
     get:
       summary: Get all flags for a run.
@@ -738,14 +738,14 @@ definitions:
         example: "2018-01-03 18:00:00"
       sport: 
         $ref: '#/definitions/Sport'
+        
+  Transponders:
+    type: "array"
+    description: "Transponders for the vehicle"
+    items:
+      type: "string"
+      example: ["2353452", "4634624"]
   
-  Transponder:
-    type: "object"
-    properties: 
-      trandponder_number: 
-        type: "integer"
-        example: 129342
-
   Passing:
     type: "object"
     properties:
@@ -813,10 +813,7 @@ definitions:
         description: "Current flag state of the run"
         example: "Green"
       transponders:
-        type: "array"
-        description: "Transponders for the vehicle"
-        items:
-          $ref: '#/definitions/Transponder'
+        $ref: '#/definitions/Transponders'
       best_lap_number:
         type: "integer"
         example: 3
@@ -1144,6 +1141,23 @@ definitions:
         type: string
       class:
         type: string
+      is_hidden:
+        type: boolean
+        example: false
+      car_registration_number: 
+        type: string
+        example: "c636ef2"
+      car_transponders: 
+        $ref: '#/definitions/Transponders'
+      driver_registration_number: 
+        type: string
+        example: "7aa18fdb"
+      start_position: 
+        type: integer
+        example: 0
+      status: 
+        type: string
+        example: "Active"
       attributes:
         $ref: '#/definitions/RacerAttributes'
 
