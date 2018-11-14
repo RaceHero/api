@@ -511,7 +511,6 @@ paths:
               properties: 
                 racer_id: 
                   type: integer
-                data:
                   $ref: '#/definitions/Passing'
               
       responses:
@@ -754,7 +753,9 @@ definitions:
     description: "Transponders for the vehicle"
     items:
       type: "string"
-      example: ["2353452", "4634624"]
+    example: 
+      - "2353452" 
+      - "4634624"
   
   Passing:
     type: "object"
@@ -1169,9 +1170,6 @@ definitions:
         example: false
       transponders: 
         $ref: '#/definitions/Transponders'
-      driver_registration_number: 
-        type: string
-        example: "7aa18fdb"
       start_position: 
         type: integer
         example: 0
