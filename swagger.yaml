@@ -488,6 +488,7 @@ paths:
               name:
                 type: string
                 description: A simple string describing the flag condition (subject to change)
+                enum: [warmup, green, yellow, red, finish, stop]
               timestamp:
                 type: string
                 format: date-time
@@ -1363,6 +1364,7 @@ definitions:
       name:
         description: A simple string describing the flag condition (subject to change)
         type: string
+        enum: [warmup, green, yellow, red, finish, stop]
       started_at:
         type: string
         format: date-time
