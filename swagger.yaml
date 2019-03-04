@@ -219,6 +219,7 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
+
   '/events/{event_id}/groups/{group_id}':
     get:
       summary: Get group information
@@ -275,7 +276,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Run'
-                
       responses:
         '200':
           description: get the racers of a single group
