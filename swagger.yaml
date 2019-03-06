@@ -1374,7 +1374,7 @@ definitions:
         description: in unit of event - either km/h or mph
         type: number
         format: double
-        
+
   ResultLap:
     description: A lap inside a result which includes run-wide details like average_speed and total_laps
     allOf:
