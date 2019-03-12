@@ -288,9 +288,121 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: Indicates no schedule has been posted yet
-  '/events/{event_id}/runs/{run_id}/results':
+          
+  '/events/{event_id}/live/leaderboard':
+    get:
+      summary: Retrieve live leaderboard data html/json format
+      parameters:
+        - name: event_id
+          in: path
+          type: string
+          description: ID of event
+          required: true
+      responses:
+        '200':
+          description: Sends live data for the run
+          schema:
+            $ref: '#/definitions/LiveLeaderboardData'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
+          
+  '/events/{event_id}/live/leaderboard.rss':
+    get:
+      produces:
+        - xml
+      summary: Retrieve live leaderboard data in rss/xml format
+      parameters:
+        - name: event_id
+          in: path
+          type: string
+          description: ID of event
+          required: true
+      responses:
+        '200':
+          description: Sends live data for the run
+          schema:
+            $ref: '#/definitions/channel'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: indicates entry does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+          
+  '/events/{event_id}/live/run.csv':
+    get:
+      produces:
+        - text/csv
+      summary: Retrieve live run data in CSV format
+      parameters:
+        - name: event_id
+          in: path
+          type: string
+          description: ID of event
+          required: true
+      responses:
+        '200':
+          description: Sends session details data for the live run
+          schema:
+            $ref: '#/definitions/LiveSessionDetails'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: indicates entry does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+          
+  '/events/{event_slug}/live/racers.rss':
+    get:
+      produces:
+        - xml
+      summary: Live run results data, format rss
+      parameters:
+        - name: event_slug
+          in: path
+          type: string
+          description: Slug of event
+          required: true
+      responses:
+        '200':
+          description: Sends session details data for the live run
+          schema:
+            $ref: '#/definitions/LiveRacerSessionDeatils'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: indicates entry does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
+  '/events/{event_id}/live/results.rss':
+    get:
+      produces:
+        - xml
+      summary: Retrieve live result data in rss/xml format
+      parameters:
+        - name: event_id
+          in: path
+          type: string
+          description: ID of event
+          required: true
+      responses:
+        '200':
+          description: Sends live data for the run
+          schema:
+            $ref: '#/definitions/channel'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: indicates entry does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+          
+  '/events/{event_id}/runs/{run_id}/results':
     get:
       summary: 'Retrieve the results of a single session for a single event with racer, lap times and position detail'
       parameters:
@@ -367,8 +479,6 @@ paths:
         '404':
           description: indicates the run does not exist
   '/events/{event_id}/runs/{run_id}/racers':
-        '429':
-          $ref: '#/responses/RetryLaterError'
     get:
       summary: Retrieve the entries for a single run with racer details
       parameters:
@@ -424,8 +534,6 @@ paths:
         '404':
           description: indicates group does not exist
   '/events/{event_id}/runs/{run_id}/flags':
-        '429':
-          $ref: '#/responses/RetryLaterError'
     get:
       summary: Get all flags for a run.
       parameters:
@@ -483,8 +591,6 @@ paths:
         '404':
           description: indicates run does not exist
   '/events/{event_id}/runs/{run_id}/passings':
-        '429':
-          $ref: '#/responses/RetryLaterError'
     get:
       summary: Get all passings for a run.
       parameters:
@@ -540,8 +646,6 @@ paths:
         '404':
           description: indicates run does not exist
   '/events/{event_id}/runs/{run_id}/racers/{racer_id}':
-        '429':
-          $ref: '#/responses/RetryLaterError'
     put:
       summary: Update the entry details for a single racer in a single run
       parameters:
@@ -641,8 +745,6 @@ paths:
         '404':
           description: indicates venue does not exist
   '/venues/{venue_id}/configurations':
-        '429':
-          $ref: '#/responses/RetryLaterError'
     get:
       summary: Get the configurations for a specific venue.
       parameters:
@@ -683,8 +785,6 @@ paths:
         '404':
           description: indicates venue does not exist
   '/live/transponders/{transponder_id}':
-        '429':
-          $ref: '#/responses/RetryLaterError'
     get:
       summary: Retrieve the live status of a single transponder
       parameters:
@@ -1274,6 +1374,7 @@ definitions:
         description: in unit of event - either km/h or mph
         type: number
         format: double
+
   ResultLap:
     description: A lap inside a result which includes run-wide details like average_speed and total_laps
     allOf:
@@ -1357,3 +1458,128 @@ definitions:
         type: integer
       limit:
         type: integer
+  
+  LiveLeaderboardData:
+    properties:
+      name:
+        type: string
+      current_lap:
+        type: number
+      started_at:
+        type: string
+        format: date-time
+      current_flag:
+        type: string
+      laps_remaining:
+        type: number
+      time_remaining:
+        type: string
+        example: "0"
+      current_time:
+        type: string
+        example: "1290143.6407792815"
+      racers:
+        type: array
+        items:
+          $ref: '#/definitions/Racer'
+          
+  LiveSessionDetails:
+    properties:
+      event_name:
+        type: string
+      group_name:
+        type: string
+      run_name:
+        type: string
+      run_type_display_name:
+        type: string
+      current_lap:
+        type: number
+      current_flag:
+        type: string
+      total_seconds:
+        type: string
+        example: "354.456"
+      total_laps:
+        type: string
+        example: "6 laps to go"
+      started_at:
+        type: string
+        format: date-time
+      time_remaining:
+        type: string
+        example: "Time Remaining: -129"
+      event_url:
+        type: string
+
+  LiveRacerSessionDeatils:
+    allOf:
+      - $ref: '#/definitions/Result'
+
+  Item:
+    properties:
+      title:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      racer_number:
+        type: string
+      racer_class:
+        type: string
+      start_position:
+        type: string
+      attribute_color:
+        type: string
+      attribute_yrmake:
+        type: string
+      attribute_hometown:
+        type: string
+      attribute_region:
+        type: string
+      attribute_group:
+        type: string
+      attribute_member_id:
+        type: string
+      attribute_unique_id:
+        type: string
+
+  channel:
+    properties:
+      title:
+        type: string
+        example: "event_slug"
+      description:
+        type: string
+      copyright:
+        type: string
+        example: "run name"
+      category:
+        type: string
+        example: "run_type_display_name"
+      image:
+        properties:
+          title:
+            type: string
+          url:
+            type: string
+          link:
+            type: string
+      pubDate:
+        type: string
+        format: date-time
+      link:
+        type: string
+        example: event_url
+      name:
+        type: string
+        example: run_name
+      item:
+        type: array
+        items:
+          $ref: '#/definitions/Item'
