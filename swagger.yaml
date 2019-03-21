@@ -74,43 +74,16 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '429':
           $ref: '#/responses/RetryLaterError'
-  '/events/{event_id}':
-    get:
-      summary: Get details about a single event
-      parameters:
-        - name: event_id
-          in: path
-          type: integer
-          description: ID of the event
-          required: true
-        - name: expand
-          in: query
-          description: '?expand=org,track,groups optionally transforms IDs into full-blown objects'
-          type: string
-      responses:
-        '200':
-          description: get the details of a single event
-          schema:
-            $ref: '#/definitions/EventDetail'
-        '401':
-          $ref: '#/responses/UnauthorizedError'
-        '429':
-          $ref: '#/responses/RetryLaterError'
     post:
       summary: Create a new event.
       parameters:
-        - in: path
-          name: event_id
-          type: integer
-          description: ID of the event
-          required: true
         - in: body
           name: body
           description: The event you want to create.
           schema:
             type: object
             properties:
-              event_name:
+              name:
                 type: string
                 description: The name of the event that will be shown in live timing & results.
               scoring_system:
@@ -147,7 +120,11 @@ paths:
                 description: ID of the track configuration.
                 type: integer
               groups:
-                $ref: '#/definitions/Group'
+                description: Update the external_id, name and runs for already present groups in an event
+                type: array
+                items:
+                  $ref: '#/definitions/Group'
+            
       responses:
         '200':
           description: sends the entry for a single racer for a single run
@@ -157,6 +134,29 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates entry does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+          
+  '/events/{event_id}':
+    get:
+      summary: Get details about a single event
+      parameters:
+        - name: event_id
+          in: path
+          type: integer
+          description: ID of the event
+          required: true
+        - name: expand
+          in: query
+          description: '?expand=org,track,groups optionally transforms IDs into full-blown objects'
+          type: string
+      responses:
+        '200':
+          description: get the details of a single event
+          schema:
+            $ref: '#/definitions/EventDetail'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
         '429':
           $ref: '#/responses/RetryLaterError'
     put:
@@ -173,6 +173,9 @@ paths:
           schema:
             type: object
             properties:
+              name:
+                type: string
+                description: The name of the event.
               scoring_system:
                 type: string
                 description: The name of the scoring system being used.
@@ -193,13 +196,18 @@ paths:
               timezone:
                 type: string
                 description: Indicate timezone for the event.
+              attributes_labels:
+                $ref: '#/definitions/RacerAttributesDefinition'
               notes:
                 $ref: '#/definitions/Note'
               track_config_id:
                 description: ID of the track configuration.
                 type: integer
               groups:
-                $ref: '#/definitions/Group'
+                description: Update the external_id, name and runs for already present groups in an event
+                type: array
+                items:
+                  $ref: '#/definitions/Group'
       responses:
         '200':
           description: sends the entry for a single racer for a single run
@@ -211,9 +219,10 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-  '/events/{event_id}/groups/{group_id}/racers':
+
+  '/events/{event_id}/groups/{group_id}':
     get:
-      summary: Get an entry list for a group.
+      summary: Get group information
       parameters:
         - name: event_id
           in: path
@@ -227,16 +236,20 @@ paths:
           required: true
       responses:
         '200':
-          description: get the racers of a single group
+          description: get the group's information
           schema:
             $ref: '#/definitions/Group'
             properties:
               racers:
-                $ref: '#/definitions/Racers'
+                $ref: '#/definitions/Racer'
+              runs:
+                $ref: '#/definitions/Run'
         '401':
           $ref: '#/responses/UnauthorizedError'
         '429':
           $ref: '#/responses/RetryLaterError'
+          
+  '/events/{event_id}/groups/{group_id}/racers':
     post:
       summary: Create a group with racers.
       parameters:
@@ -254,11 +267,15 @@ paths:
           name: body
           description: The attributes and racers you want to add to the run.
           schema:
-            type: object
-            $ref: '#/definitions/Group'
             properties:
               racers:
-                $ref: '#/definitions/Racer'
+                type: array
+                items:
+                  $ref: '#/definitions/Racer'
+              runs:
+                type: array
+                items:
+                  $ref: '#/definitions/Run'
       responses:
         '200':
           description: get the racers of a single group
@@ -288,7 +305,9 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: Indicates no schedule has been posted yet
-          
+        '429':
+          $ref: '#/responses/RetryLaterError'
+                
   '/events/{event_id}/live/leaderboard':
     get:
       summary: Retrieve live leaderboard data html/json format
@@ -478,6 +497,9 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates the run does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
   '/events/{event_id}/runs/{run_id}/racers':
     get:
       summary: Retrieve the entries for a single run with racer details
@@ -533,6 +555,9 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates group does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
   '/events/{event_id}/runs/{run_id}/flags':
     get:
       summary: Get all flags for a run.
@@ -578,6 +603,7 @@ paths:
               name:
                 type: string
                 description: A simple string describing the flag condition (subject to change)
+                enum: [warmup, green, yellow, red, finish, stop]
               timestamp:
                 type: string
                 format: date-time
@@ -590,6 +616,9 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates run does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
   '/events/{event_id}/runs/{run_id}/passings':
     get:
       summary: Get all passings for a run.
@@ -632,10 +661,7 @@ paths:
           schema:
             type: array
             items:
-              properties:
-                racer_id:
-                  type: integer
-                  $ref: '#/definitions/Passing'
+              $ref: '#/definitions/Passing'
       responses:
         '200':
           description: adds a passing for a racer to the run.
@@ -645,6 +671,9 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates run does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
   '/events/{event_id}/runs/{run_id}/racers/{racer_id}':
     put:
       summary: Update the entry details for a single racer in a single run
@@ -744,6 +773,9 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates venue does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
   '/venues/{venue_id}/configurations':
     get:
       summary: Get the configurations for a specific venue.
@@ -774,7 +806,9 @@ paths:
           name: body
           description: Details about the venue
           schema:
-            $ref: '#/definitions/VenueConfiguration'
+            properties:
+              config:
+                $ref: '#/definitions/VenueConfiguration'
       responses:
         '200':
           description: adds a venue.
@@ -784,6 +818,33 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates venue does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+          
+  '/venues/{venue_id}/configurations/{id}':
+    get:
+      summary: Get the configurations for a specific venue.
+      parameters:
+        - name: venue_id
+          in: path
+          type: integer
+          description: ID of the venue
+          required: true
+        - name: id
+          in: path
+          type: integer
+          description: ID of the Venue configuration
+          required: true
+      responses:
+        '200':
+          description: Details about the venue configuration
+          schema:
+            $ref: '#/definitions/VenueConfiguration'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '429':
+          $ref: '#/responses/RetryLaterError'
+    
   '/live/transponders/{transponder_id}':
     get:
       summary: Retrieve the live status of a single transponder
@@ -1120,7 +1181,7 @@ definitions:
         type: number
         format: double
         example: '3.5'
-      units:
+      length_unit:
         type: string
         example: mi
       direction:
@@ -1422,6 +1483,7 @@ definitions:
       name:
         description: A simple string describing the flag condition (subject to change)
         type: string
+        enum: [warmup, green, yellow, red, finish, stop]
       started_at:
         type: string
         format: date-time
