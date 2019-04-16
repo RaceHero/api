@@ -435,6 +435,10 @@ paths:
           type: integer
           description: ID of the run
           required: true
+        - name: expand
+          in: query
+          description: '?expand=laps,flags,notes optionally includes related fields into full-blown objects'
+          type: string
       responses:
         '200':
           description: Sends the results for a single run
