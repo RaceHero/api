@@ -17,8 +17,10 @@ produces:
 securityDefinitions:
   basicAuth:
     type: basic
+    description: "Put API key as username and any password (or blank). E.g.: `curl -u {apikey}:x https://...` or `curl -u {apikey}: https://...`" 
 security:
   - basicAuth: []
+  
 responses:
   UnauthorizedError:
     description: Authentication information is missing or invalid
