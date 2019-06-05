@@ -17,10 +17,10 @@ produces:
 securityDefinitions:
   basicAuth:
     type: basic
-    description: "Put API key as username and any password (or blank). E.g.: `curl -u {apikey}:x https://...` or `curl -u {apikey}: https://...`" 
+    description: 'Put API key as username and any password (or blank). E.g.: `curl -u {apikey}:x https://...` or `curl -u {apikey}: https://...`'
 security:
   - basicAuth: []
-  
+
 responses:
   UnauthorizedError:
     description: Authentication information is missing or invalid
@@ -56,6 +56,10 @@ paths:
           description: whether to restrict to only live events
           type: boolean
           default: false
+        - name: expand
+          in: query
+          description: '?expand=org,track,groups optionally transforms IDs into full-blown objects'
+          type: string
       responses:
         '200':
           description: List all events
@@ -126,7 +130,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Group'
-            
+
       responses:
         '200':
           description: sends the entry for a single racer for a single run
@@ -138,7 +142,7 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/events/{event_id}':
     get:
       summary: Get details about a single event
@@ -240,17 +244,21 @@ paths:
         '200':
           description: get the group's information
           schema:
-            $ref: '#/definitions/Group'
-            properties:
-              racers:
-                $ref: '#/definitions/Racer'
-              runs:
-                $ref: '#/definitions/Run'
+            allOf:
+              - $ref: '#/definitions/Group'
+              - type: object
+                properties:
+                  racers:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Racer'
+                  attribute_labels:
+                    $ref: '#/definitions/RacerAttributesDefinition'
         '401':
           $ref: '#/responses/UnauthorizedError'
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/events/{event_id}/groups/{group_id}/racers':
     post:
       summary: Create a group with racers.
@@ -309,7 +317,7 @@ paths:
           description: Indicates no schedule has been posted yet
         '429':
           $ref: '#/responses/RetryLaterError'
-                
+
   '/events/{event_id}/live/leaderboard':
     get:
       summary: Retrieve live leaderboard data html/json format
@@ -330,7 +338,7 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/events/{event_id}/live/leaderboard.rss':
     get:
       produces:
@@ -353,7 +361,7 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/events/{event_id}/live/run.csv':
     get:
       produces:
@@ -376,7 +384,7 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/events/{event_slug}/live/racers.rss':
     get:
       produces:
@@ -422,7 +430,7 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/events/{event_id}/runs/{run_id}/results':
     get:
       summary: 'Retrieve the results of a single session for a single event with racer, lap times and position detail'
@@ -826,7 +834,7 @@ paths:
           description: indicates venue does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
-          
+
   '/venues/{venue_id}/configurations/{id}':
     get:
       summary: Get the configurations for a specific venue.
@@ -850,7 +858,7 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '429':
           $ref: '#/responses/RetryLaterError'
-    
+
   '/live/transponders/{transponder_id}':
     get:
       summary: Retrieve the live status of a single transponder
@@ -1105,6 +1113,10 @@ definitions:
             $ref: '#/definitions/Org'
           track:
             $ref: '#/definitions/Venue'
+          groups:
+            type: array
+            items:
+              $ref: '#/definitions/Group'
   EventDetail:
     type: object
     allOf:
@@ -1161,25 +1173,30 @@ definitions:
         type: string
       country:
         type: string
-      website_url:
+      url:
         type: string
         example: 'http://challengingtrack.org'
-      logo:
+      html_url:
+        type: string
+        example: 'http://racehero.io/venues/3000'
+      avatar_url:
         type: string
         example: 'http://challengingtrack.org'
       lat:
         type: string
       long:
         type: string
+      configuration:
+        $ref: '#/definitions/VenueConfiguration'
   VenueConfiguration:
     type: object
     properties:
-      venue_id:
-        type: integer
-        example: 4500
       id:
         type: integer
         example: 4000
+      venue_id:
+        type: integer
+        example: 4500
       name:
         type: string
         example: Full Course
@@ -1225,6 +1242,9 @@ definitions:
       id:
         type: string
         example: 8000
+      group_id:
+        type: string
+        example: 5000
       name:
         type: string
         example: Sunday Final Race
@@ -1526,7 +1546,7 @@ definitions:
         type: integer
       limit:
         type: integer
-  
+
   LiveLeaderboardData:
     properties:
       name:
@@ -1542,15 +1562,15 @@ definitions:
         type: number
       time_remaining:
         type: string
-        example: "0"
+        example: '0'
       current_time:
         type: string
-        example: "1290143.6407792815"
+        example: '1290143.6407792815'
       racers:
         type: array
         items:
           $ref: '#/definitions/Racer'
-          
+
   LiveSessionDetails:
     properties:
       event_name:
@@ -1567,16 +1587,16 @@ definitions:
         type: string
       total_seconds:
         type: string
-        example: "354.456"
+        example: '354.456'
       total_laps:
         type: string
-        example: "6 laps to go"
+        example: '6 laps to go'
       started_at:
         type: string
         format: date-time
       time_remaining:
         type: string
-        example: "Time Remaining: -129"
+        example: 'Time Remaining: -129'
       event_url:
         type: string
 
@@ -1621,15 +1641,15 @@ definitions:
     properties:
       title:
         type: string
-        example: "event_slug"
+        example: 'event_slug'
       description:
         type: string
       copyright:
         type: string
-        example: "run name"
+        example: 'run name'
       category:
         type: string
-        example: "run_type_display_name"
+        example: 'run_type_display_name'
       image:
         properties:
           title:
