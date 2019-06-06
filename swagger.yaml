@@ -58,7 +58,7 @@ paths:
           default: false
         - name: expand
           in: query
-          description: '?expand=org,track,groups optionally transforms IDs into full-blown objects'
+          description: '?expand=org,venue,groups optionally transforms IDs into full-blown objects'
           type: string
       responses:
         '200':
@@ -123,7 +123,7 @@ paths:
                   - Operating Steward - Charlie
                   - Chief of Timing & Scoring - Kimi
               venue_configuration_id:
-                description: ID of the track configuration.
+                description: ID of the venue configuration.
                 type: integer
               groups:
                 description: Update the external_id, name and runs for already present groups in an event
@@ -154,7 +154,7 @@ paths:
           required: true
         - name: expand
           in: query
-          description: '?expand=org,track,groups optionally transforms IDs into full-blown objects'
+          description: '?expand=org,venue,groups optionally transforms IDs into full-blown objects'
           type: string
       responses:
         '200':
@@ -206,7 +206,7 @@ paths:
                 $ref: '#/definitions/RacerAttributesDefinition'
               notes:
                 $ref: '#/definitions/Note'
-              track_config_id:
+              venue_configuration_id:
                 description: ID of the track configuration.
                 type: integer
               groups:
@@ -1111,7 +1111,7 @@ definitions:
               - Chief of Timing & Scoring - Kimi
           org:
             $ref: '#/definitions/Org'
-          track:
+          venue:
             $ref: '#/definitions/Venue'
           groups:
             type: array
@@ -1399,7 +1399,7 @@ definitions:
         $ref: '#/definitions/Run'
       event:
         $ref: '#/definitions/Event'
-      track:
+      venue:
         $ref: '#/definitions/Venue'
       attributes_labels:
         $ref: '#/definitions/RacerAttributesDefinition'
