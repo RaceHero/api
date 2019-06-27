@@ -758,6 +758,57 @@ paths:
           description: indicates entry does not exist
         '429':
           $ref: '#/responses/RetryLaterError'
+  '/organizations/{organization_id}/events':
+    get:
+      summary: Get a list of event summaries in reverse chronological order (most recent first) for a particular organization
+      parameters:
+        - name: organization_id
+          in: path
+          type: integer
+          description: ID of the organization
+          required: true
+        - name: limit
+          in: query
+          description: number of events to return
+          type: integer
+          default: 25
+          minimum: 0
+          maximum: 100
+        - name: offset
+          in: query
+          description: number of events to skip for pagination
+          type: integer
+          default: 0
+          minimum: 0
+        - name: live
+          in: query
+          description: whether to restrict to only live events
+          type: boolean
+          default: false
+        - name: expand
+          in: query
+          description: '?expand=org,venue,groups optionally transforms IDs into full-blown objects'
+          type: string
+      responses:
+        '200':
+          description: List all events
+          schema:
+            type: object
+            properties:
+              count:
+                type: integer
+              offset:
+                type: integer
+              limit:
+                type: integer
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/EventSummary'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '429':
+          $ref: '#/responses/RetryLaterError'
   /venues:
     get:
       summary: Get all venues.
@@ -787,6 +838,58 @@ paths:
           $ref: '#/responses/UnauthorizedError'
         '404':
           description: indicates venue does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
+  '/venues/{venue_id}/events':
+    get:
+      summary: Get a list of event summaries in reverse chronological order (most recent first) for a particular venue
+      parameters:
+        - name: venue_id
+          in: path
+          type: integer
+          description: ID of the venue
+          required: true
+        - name: limit
+          in: query
+          description: number of events to return
+          type: integer
+          default: 25
+          minimum: 0
+          maximum: 100
+        - name: offset
+          in: query
+          description: number of events to skip for pagination
+          type: integer
+          default: 0
+          minimum: 0
+        - name: live
+          in: query
+          description: whether to restrict to only live events
+          type: boolean
+          default: false
+        - name: expand
+          in: query
+          description: '?expand=org,venue,groups optionally transforms IDs into full-blown objects'
+          type: string
+      responses:
+        '200':
+          description: List all events
+          schema:
+            type: object
+            properties:
+              count:
+                type: integer
+              offset:
+                type: integer
+              limit:
+                type: integer
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/EventSummary'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
         '429':
           $ref: '#/responses/RetryLaterError'
 
@@ -854,6 +957,63 @@ paths:
           description: Details about the venue configuration
           schema:
             $ref: '#/definitions/VenueConfiguration'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
+  '/venues/{venue_id}/configurations/{configuration_id}/events':
+    get:
+      summary: Get a list of event summaries in reverse chronological order (most recent first) for a particular venue and venue configuration
+      parameters:
+        - name: venue_id
+          in: path
+          type: integer
+          description: ID of the venue
+          required: true
+        - name: configuration_id
+          in: path
+          type: integer
+          description: ID of the venue configuration
+          required: true
+        - name: limit
+          in: query
+          description: number of events to return
+          type: integer
+          default: 25
+          minimum: 0
+          maximum: 100
+        - name: offset
+          in: query
+          description: number of events to skip for pagination
+          type: integer
+          default: 0
+          minimum: 0
+        - name: live
+          in: query
+          description: whether to restrict to only live events
+          type: boolean
+          default: false
+        - name: expand
+          in: query
+          description: '?expand=org,venue,groups optionally transforms IDs into full-blown objects'
+          type: string
+      responses:
+        '200':
+          description: List all events
+          schema:
+            type: object
+            properties:
+              count:
+                type: integer
+              offset:
+                type: integer
+              limit:
+                type: integer
+              data:
+                type: array
+                items:
+                  $ref: '#/definitions/EventSummary'
         '401':
           $ref: '#/responses/UnauthorizedError'
         '429':
