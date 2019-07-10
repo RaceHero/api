@@ -362,6 +362,29 @@ paths:
         '429':
           $ref: '#/responses/RetryLaterError'
 
+  '/events/{event_id}/live/leaderboard.csv':
+    get:
+      produces:
+        - csv
+      summary: Retrieve live leaderboard data in csv format
+      parameters:
+        - name: event_id
+          in: path
+          type: string
+          description: ID of event
+          required: true
+      responses:
+        '200':
+          description: Sends live data for the run
+          schema:
+            $ref: '#/definitions/channel'
+        '401':
+          $ref: '#/responses/UnauthorizedError'
+        '404':
+          description: indicates entry does not exist
+        '429':
+          $ref: '#/responses/RetryLaterError'
+
   '/events/{event_id}/live/run.csv':
     get:
       produces:
